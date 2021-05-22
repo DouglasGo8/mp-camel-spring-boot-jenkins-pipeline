@@ -14,5 +14,15 @@ pipeline {
                 sh 'mvn clean test'
             }
         }
+         stage ('docker build') {
+            steps {
+                sh 'docker build -t app .'
+            }
+        }
+        stage ('docker push') {
+            steps {
+                sh 'docker push douglasdb/app:latest'
+            }
+        }
     }
 }
