@@ -23,7 +23,7 @@ public class MySpringBootApplicationTest {
 	@Test
 	public void test() throws Exception {
 
-		var mock = camelContext.getEndpoint("mock:stream:out", MockEndpoint.class);
+		final MockEndpoint mock = camelContext.getEndpoint("mock:stream:out", MockEndpoint.class);
 
 		AdviceWith.adviceWith(camelContext, "hello",
 				// intercepting an exchange on route
