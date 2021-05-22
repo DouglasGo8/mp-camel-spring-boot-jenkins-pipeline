@@ -1,0 +1,3 @@
+org/camel/jenkins/pipeline/MySpringBootApplication.class
+org/camel/jenkins/pipeline/MySpringBootRouter.class
+org/camel/jenkins/pipeline/MySpringBean.class
