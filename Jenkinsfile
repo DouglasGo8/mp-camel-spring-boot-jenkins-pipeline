@@ -30,5 +30,21 @@ pipeline {
                 sh 'docker push douglasdb/app'
             }
         }
+        stage ('acceptance stage' ){
+            steps {
+                sh 'docker run -d --rm -p 8080:12080 --name app douglasdb/app'
+            }
+        }
+        stage ('remove container') {
+            steps {
+                sh 'docker stop app'
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'rm -r *'
+        }
     }
 }
