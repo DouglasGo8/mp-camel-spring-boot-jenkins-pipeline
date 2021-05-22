@@ -16,7 +16,7 @@ pipeline {
         }
         stage ('build app') {
             steps {
-                sh 'mvn clean compile package'
+                sh 'mvn -DskipTests clean compile package'
             }
         }
         stage ('docker build') {
@@ -26,7 +26,8 @@ pipeline {
         }
         stage ('docker push') {
             steps {
-                sh 'docker push douglasdb/app:latest'
+                sh 'docker tag app douglasdb/app'
+                sh 'docker push douglasdb/app'
             }
         }
     }
