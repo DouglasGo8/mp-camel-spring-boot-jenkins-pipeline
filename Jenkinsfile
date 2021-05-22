@@ -14,7 +14,12 @@ pipeline {
                 sh 'mvn clean test'
             }
         }
-         stage ('docker build') {
+        stage ('build app') {
+            steps {
+                sh 'mvn clean compile package'
+            }
+        }
+        stage ('docker build') {
             steps {
                 sh 'docker build -t app .'
             }
