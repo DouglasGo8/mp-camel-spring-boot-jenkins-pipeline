@@ -4,12 +4,12 @@ pipeline {
         maven 'MAVEN_DEF'
     }
     stages {
-        stage ('Unit Test') {
+        stage ('Compile State') {
             steps {
                 sh 'mvn clean compile'
             }
         }
-        stage ('Unit Test') {
+        stage ('UnitTest Stage') {
             steps {
                 sh 'mvn clean test'
             }
