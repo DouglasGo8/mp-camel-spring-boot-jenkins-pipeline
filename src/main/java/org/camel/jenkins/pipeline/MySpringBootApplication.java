@@ -23,14 +23,4 @@ public class MySpringBootApplication {
     }
   }
 
-
-    @RestController
-    public static class MyApi {
-
-        @GetMapping
-        public String sayHi() {
-            return "Hi";
-        }
-    }
-
 }
