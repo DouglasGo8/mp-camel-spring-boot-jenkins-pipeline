@@ -17,12 +17,6 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/DouglasGo8/mp-camel-spring-boot-jenkins-pipeline.git'
             }
         }
-
-        stage ('Compile State') {
-            steps {
-                sh 'mvn clean compile'
-            }
-        }
         stage ('Build app') {
             steps {
                 sh 'mvn -DskipTests clean compile package'
