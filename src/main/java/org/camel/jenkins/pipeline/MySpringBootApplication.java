@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @SpringBootApplication
 public class MySpringBootApplication {
 
@@ -19,7 +21,7 @@ public class MySpringBootApplication {
   static class MyResource {
     @GetMapping
     public String sayHi() {
-      return "Hi Jenkins";
+      return "Hi Jenkins at ".concat(LocalDate.now().toString());
     }
   }
 
