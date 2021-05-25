@@ -2,7 +2,6 @@
 def jarName
 def firstDeploy = true
 def serviceName = 'MyService'
-def description = 'Java SpringBoot and Apache Camel'
 
 
 pipeline {
@@ -101,7 +100,7 @@ esac
 def wrapperJavaLinuxService (serviceName) {
     return ("""
 [Unit]
-Description =
+Description = Java SpringBoot and Apache Camel
 After network.target = ${serviceName}.service
 [Service]
 Type = forking
