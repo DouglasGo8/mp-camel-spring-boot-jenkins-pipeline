@@ -13,11 +13,6 @@ pipeline {
         SERVER_PWD = credentials('ssh_server_test_pwd')
     }
     stages {
-        stage ('Git Clone') {
-            steps {
-                git branch: 'master', url: 'https://github.com/DouglasGo8/mp-camel-spring-boot-jenkins-pipeline.git'
-            }
-        }
         stage ('Build app') {
             steps {
                 sh 'mvn -DskipTests clean compile package'
@@ -28,37 +23,47 @@ pipeline {
                 // sh 'pwd'
                 // https://www.jenkins.io/doc/pipeline/steps/ssh-steps/
                 script {
+                    //
+                    linuxService = serviceName + '.service'
+                    jarName = findFiles(glob: 'target/*.jar')
+                    targetJar = 'target/' + jarName[0].name
+                    //
                     def remote = [:]
                     remote.name = 'test'
-                    remote.host = 'lpvdocker01.domhcor.local'
-                    remote.user = 'devguest'
+                    remote.host = 'server_host_name'
+                    remote.user = 'user_name'
                     remote.password = env.SERVER_PWD
                     remote.allowAnyHosts = true
-                        if (firstDeploy) {
-                            jarName = findFiles(glob: 'target/*.jar')
-                            shellScript = serviceName + '.sh'
-                            linuxService = serviceName + '.service'
-                            writeFile file: shellScript, text: wrapperJavaBashFile(serviceName, jarName[0].name)
-                            writeFile file: linuxService, text: wrapperJavaLinuxService(serviceName)
-                            targetJar = 'target/' + jarName[0].name
-                            // ***************************************************************
-                            // COPY .jar|.sh|.service to home ON TARGET_SERVER
-                            // *****************************************************************
-                            sshPut remote: remote, from: targetJar, into: '.', override: true
-                            sshPut remote: remote, from: shellScript, into: '.', override: true
-                            sshPut remote: remote, from: linuxService, into: '.', overide: true
-                            // ***************************************************************
-                            // MOVE .jar|.sh|.service to dirs ON TARGET_SERVER
-                            // *****************************************************************
-                            sshCommand remote: remote, command: 'mv *.jar *.sh /usr/local/bin', sudo: true
-                            sshCommand remote: remote, command: 'mv *.service /etc/systemd/system', sudo: true
-                            sshCommand remote: remote, command: 'chmod +x /usr/local/bin/' + shellScript, sudo: true
-                            sshCommand remote: remote, command: 'systemctl start ' + linuxService, sudo: true
-                        } else {
-                            echo 'SSH Command Only'
-
-                        }
-
+                    //
+                    if (firstDeploy) {
+                        shellScript = serviceName + '.sh'
+                        writeFile file: shellScript, text: wrapperJavaBashFile(serviceName, jarName[0].name)
+                        writeFile file: linuxService, text: wrapperJavaLinuxService(serviceName)
+                        // ***************************************************************
+                        // COPY .jar|.sh|.service to home ON TARGET_SERVER
+                        // *****************************************************************
+                        sshPut remote: remote, from: targetJar, into: '.', override: true
+                        sshPut remote: remote, from: shellScript, into: '.', override: true
+                        sshPut remote: remote, from: linuxService, into: '.', overide: true
+                        // ***************************************************************
+                        // MOVE .jar|.sh|.service to dirs ON TARGET_SERVER
+                        // *****************************************************************
+                        sshCommand remote: remote, command: 'mv *.jar *.sh /usr/local/bin', sudo: true
+                        sshCommand remote: remote, command: 'mv *.service /etc/systemd/system', sudo: true
+                        sshCommand remote: remote, command: 'chmod +x /usr/local/bin/' + shellScript, sudo: true
+                        sshCommand remote: remote, command: 'systemctl start ' + linuxService, sudo: true
+                    } else {
+                        // ***************************************************************
+                        // COPY .jar to home ON TARGET_SERVER
+                        // *****************************************************************
+                        sshPut remote: remote, from: targetJar, into: '.', override: true
+                        // ***************************************************************
+                        // MOVE .jar|.sh|.service to dirs ON TARGET_SERVER
+                        // *****************************************************************
+                        sshCommand remote: remote, command: 'systemctl stop ' + linuxService, sudo: true
+                        sshCommand remote: remote, command: 'mv *.jar /usr/local/bin', sudo: true
+                        sshCommand remote: remote, command: 'systemctl restart ' + linuxService, sudo: true
+                    }
                 }
             }
         }
