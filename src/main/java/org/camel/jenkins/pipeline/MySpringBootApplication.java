@@ -21,7 +21,7 @@ public class MySpringBootApplication {
   static class MyResource {
     @GetMapping
     public String sayHi() {
-      return "Hi Jenkins at, sem D'Brechia nao tem Jenkins ".concat(LocalDate.now().toString());
+      return "Hi Jenkins at ".concat(LocalDate.now().toString());
     }
   }
 
