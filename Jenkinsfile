@@ -1,9 +1,11 @@
 
 def jarName
-def firstDeploy = false
+def firstDeploy = true
 def serviceName = 'MyService'
 
-
+/**
+ * @see README.md
+ */
 pipeline {
     agent any
     tools {
@@ -13,6 +15,11 @@ pipeline {
         SERVER_PWD = credentials('ssh_server_test_pwd')
     }
     stages {
+        stage ('Git Clone') {
+            steps {
+                git branch: 'master', url: 'https://github.com/DouglasGo8/mp-camel-spring-boot-jenkins-pipeline.git'
+            }
+        }
         stage ('Build app') {
             steps {
                 sh 'mvn -DskipTests clean compile package'
@@ -29,9 +36,9 @@ pipeline {
                     targetJar = 'target/' + jarName[0].name
                     //
                     def remote = [:]
-                    remote.name = 'test'
-                    remote.host = 'server_host_name'
-                    remote.user = 'user_name'
+                    remote.name = 'Jenkins_Template_Meho'
+                    remote.host = 'lpvdocker01.domhcor.local'
+                    remote.user = 'devguest'
                     remote.password = env.SERVER_PWD
                     remote.allowAnyHosts = true
                     //
@@ -58,7 +65,7 @@ pipeline {
                         // *****************************************************************
                         sshPut remote: remote, from: targetJar, into: '.', override: true
                         // ***************************************************************
-                        // MOVE .jar|.sh|.service to dirs ON TARGET_SERVER
+                        // MOVE .jar to dirs ON TARGET_SERVER
                         // *****************************************************************
                         sshCommand remote: remote, command: 'systemctl stop ' + linuxService, sudo: true
                         sshCommand remote: remote, command: 'mv *.jar /usr/local/bin', sudo: true
