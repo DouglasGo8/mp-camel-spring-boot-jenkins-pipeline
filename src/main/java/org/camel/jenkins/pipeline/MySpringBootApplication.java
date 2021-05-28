@@ -23,7 +23,7 @@ public class MySpringBootApplication {
     @GetMapping
     @ResponseBody
     public String sayHi() {
-      return "<html><head><title>Fu**-off the MS!</title><body><h1>Hi I'm Jenkins your God!!!</h1></body></html>";
+      return "<html><head><title>Fu**-off the MS</title><body><h1>Hi I'm Jenkins your God</h1></body></html>";
     }
   }
 
